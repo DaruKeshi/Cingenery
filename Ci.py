@@ -21,7 +21,6 @@ def main(page: ft.Page):
     def mostrar_menu(e=None):
         limpiar_controles()
         page.controls.append(ft.Text("Calculadora de Ingeniería", size=24, weight="bold"))
-        # (emoji, texto, función)
         opciones = [
             ("📦", "Volumen por dimensiones", volumen_dimensiones),
             ("⚖️", "Volumen por masa y densidad", volumen_masa_densidad),
@@ -82,8 +81,9 @@ def main(page: ft.Page):
             ft.dropdown.Option("g"),
             ft.dropdown.Option("kg"),
             ft.dropdown.Option("toneladas")
-        ], value="kg")
-        densidad_custom = ft.TextField(label="Densidad personalizada (kg/m³)")
+        ], value="kg", width=120)
+        densidad_custom = ft.TextField(label="Densidad personalizada (kg/m³)", width=170)
+
         def calcular_densidad(d):
             try:
                 m = float(masa.value)
@@ -95,12 +95,14 @@ def main(page: ft.Page):
             except Exception:
                 resultado.value = "Error en el cálculo"
             page.update()
+
         botones = [ft.ElevatedButton(mat, on_click=lambda e, m=mat: calcular_densidad(m)) for mat in materiales]
         filas = [
             ft.Row(controls=botones[i:i+2], spacing=10)
             for i in range(0, len(botones), 2)
         ]
-        def calcular_personalizado(ev):
+
+        def calcular_personalizado(ev=None):
             try:
                 m = float(masa.value)
                 u = unidad.value
@@ -112,12 +114,15 @@ def main(page: ft.Page):
             except Exception:
                 resultado.value = "Error en personalizado"
             page.update()
+
+        densidad_custom.on_change = calcular_personalizado
+
         page.controls.extend([
             ft.Text("Volumen (masa / densidad)", size=20),
-            masa, unidad, ft.Text("Selecciona material:"),
+            masa,
+            ft.Row([unidad, densidad_custom], spacing=10),  # Agrupados en una fila
+            ft.Text("Selecciona material:"),
             *filas,
-            densidad_custom,
-            ft.ElevatedButton("Calcular con densidad personalizada", on_click=calcular_personalizado),
             resultado,
             ft.ElevatedButton("Volver al menú", on_click=mostrar_menu)
         ])
