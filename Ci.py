@@ -29,8 +29,17 @@ def main(page: ft.Page):
             ("Presión superficial", presion_superficial),
             ("Coeficiente de permeabilidad", coeficiente_permeabilidad)
         ]
-        for texto, funcion in opciones:
-            page.controls.append(ft.ElevatedButton(texto, on_click=funcion)) # type: ignore
+        botones = [
+    ft.ElevatedButton(texto, on_click=funcion, expand=True)
+    for texto, funcion in opciones
+]
+
+filas = [
+    ft.Row(controls=botones[i:i+2], spacing=10)
+    for i in range(0, len(botones), 2)
+]
+
+page.controls.extend(filas) # type: ignore
         page.update()
 
     def volumen_dimensiones(e):
