@@ -18,6 +18,13 @@ def main(page: ft.Page):
         resultado.value = ""
         page.update()
 
+    # Estilo cuadrado reutilizable para botones de menú y selección de materiales
+    square_btn_style = ft.ButtonStyle(
+        shape=ft.RoundedRectangleBorder(radius=8),
+        padding=0,
+    )
+    SQUARE_BTN_SIZE = 100
+
     def mostrar_menu(e=None):
         limpiar_controles()
         page.controls.append(ft.Text("Calculadora de Ingeniería", size=24, weight="bold"))
@@ -30,11 +37,17 @@ def main(page: ft.Page):
             ("Coeficiente de permeabilidad", coeficiente_permeabilidad)
         ]
         botones = [
-            ft.ElevatedButton(texto, on_click=funcion, expand=True)
+            ft.ElevatedButton(
+                texto,
+                on_click=funcion,
+                width=SQUARE_BTN_SIZE,
+                height=SQUARE_BTN_SIZE,
+                style=square_btn_style
+            )
             for texto, funcion in opciones
         ]
         filas = [
-            ft.Row(controls=botones[i:i+2], spacing=10)
+            ft.Row(controls=botones[i:i+2], spacing=10, alignment="center")
             for i in range(0, len(botones), 2)
         ]
         page.controls.extend(filas)
@@ -80,7 +93,21 @@ def main(page: ft.Page):
             except Exception:
                 resultado.value = "Error en el cálculo"
             page.update()
-        botones = [ft.ElevatedButton(mat, on_click=lambda e, m=mat: calcular_densidad(m)) for mat in materiales]
+        # Botones cuadrados para materiales, en dos columnas
+        botones = [
+            ft.ElevatedButton(
+                mat,
+                on_click=lambda e, m=mat: calcular_densidad(m),
+                width=SQUARE_BTN_SIZE,
+                height=SQUARE_BTN_SIZE,
+                style=square_btn_style
+            )
+            for mat in materiales
+        ]
+        filas = [
+            ft.Row(controls=botones[i:i+2], spacing=10, alignment="center")
+            for i in range(0, len(botones), 2)
+        ]
         def calcular_personalizado(ev):
             try:
                 m = float(masa.value)
@@ -95,7 +122,8 @@ def main(page: ft.Page):
             page.update()
         page.controls.extend([
             ft.Text("Volumen (masa / densidad)", size=20),
-            masa, unidad, ft.Text("Selecciona material:"), *botones,
+            masa, unidad, ft.Text("Selecciona material:"),
+            *filas,
             densidad_custom,
             ft.ElevatedButton("Calcular con densidad personalizada", on_click=calcular_personalizado),
             resultado,
@@ -172,7 +200,20 @@ def main(page: ft.Page):
             densidad.value = str(materiales_local[m]["densidad"])
             rendimiento.value = str(materiales_local[m]["rendimiento"])
             page.update()
-        botones = [ft.ElevatedButton(mat, on_click=lambda e, m=mat: usar_material(m)) for mat in materiales_local]
+        botones = [
+            ft.ElevatedButton(
+                mat,
+                on_click=lambda e, m=mat: usar_material(m),
+                width=SQUARE_BTN_SIZE,
+                height=SQUARE_BTN_SIZE,
+                style=square_btn_style
+            )
+            for mat in materiales_local
+        ]
+        filas = [
+            ft.Row(controls=botones[i:i+2], spacing=10, alignment="center")
+            for i in range(0, len(botones), 2)
+        ]
         def calcular(ev):
             try:
                 v = float(volumen.value)
@@ -186,7 +227,8 @@ def main(page: ft.Page):
         page.controls.extend([
             ft.Text("Cantidad de bolsas de material", size=20),
             volumen, densidad, rendimiento,
-            ft.Text("Materiales comunes:"), *botones,
+            ft.Text("Materiales comunes:"),
+            *filas,
             ft.ElevatedButton("Calcular", on_click=calcular),
             resultado,
             ft.ElevatedButton("Volver al menú", on_click=mostrar_menu)
