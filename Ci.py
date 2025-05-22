@@ -22,19 +22,31 @@ def main(page: ft.Page):
         limpiar_controles()
         page.controls.append(ft.Text("Calculadora de Ingeniería", size=24, weight="bold"))
         opciones = [
-            ("Volumen por dimensiones", volumen_dimensiones),
-            ("Volumen por masa y densidad", volumen_masa_densidad),
-            ("Conversión de unidades", conversion_unidades),
-            ("Cantidad de bolsas de material", cantidad_material),
-            ("Presión superficial", presion_superficial),
-            ("Coeficiente de permeabilidad", coeficiente_permeabilidad)
+            # (icono, función)
+            (ft.icons.CALCULATE, volumen_dimensiones),
+            (ft.icons.SCALE, volumen_masa_densidad),
+            (ft.icons.SWAP_HORIZ, conversion_unidades),
+            (ft.icons.SHOPPING_BAG, cantidad_material),
+            (ft.icons.SPEED, presion_superficial),
+            (ft.icons.OPACITY, coeficiente_permeabilidad)
         ]
+        SQUARE_BTN_SIZE = 100
+        square_btn_style = ft.ButtonStyle(
+            shape=ft.RoundedRectangleBorder(radius=8),
+            padding=0,
+        )
         botones = [
-            ft.ElevatedButton(texto, on_click=funcion, expand=True)
-            for texto, funcion in opciones
+            ft.ElevatedButton(
+                content=ft.Icon(icono, size=48),
+                on_click=funcion,
+                width=SQUARE_BTN_SIZE,
+                height=SQUARE_BTN_SIZE,
+                style=square_btn_style
+            )
+            for icono, funcion in opciones
         ]
         filas = [
-            ft.Row(controls=botones[i:i+2], spacing=10)
+            ft.Row(controls=botones[i:i+2], spacing=10, alignment="center")
             for i in range(0, len(botones), 2)
         ]
         page.controls.extend(filas)
@@ -81,7 +93,6 @@ def main(page: ft.Page):
                 resultado.value = "Error en el cálculo"
             page.update()
         botones = [ft.ElevatedButton(mat, on_click=lambda e, m=mat: calcular_densidad(m)) for mat in materiales]
-        # Agrupa los botones de materiales en filas de 2
         filas = [
             ft.Row(controls=botones[i:i+2], spacing=10)
             for i in range(0, len(botones), 2)
@@ -179,7 +190,6 @@ def main(page: ft.Page):
             rendimiento.value = str(materiales_local[m]["rendimiento"])
             page.update()
         botones = [ft.ElevatedButton(mat, on_click=lambda e, m=mat: usar_material(m)) for mat in materiales_local]
-        # Agrupa los botones de materiales en filas de 2
         filas = [
             ft.Row(controls=botones[i:i+2], spacing=10)
             for i in range(0, len(botones), 2)
