@@ -21,29 +21,32 @@ def main(page: ft.Page):
     def mostrar_menu(e=None):
         limpiar_controles()
         page.controls.append(ft.Text("Calculadora de Ingeniería", size=24, weight="bold"))
+        # (emoji, texto, función)
         opciones = [
-            # (icono, función)
-            (ft.icons.CALCULATE, volumen_dimensiones),
-            (ft.icons.SCALE, volumen_masa_densidad),
-            (ft.icons.SWAP_HORIZ, conversion_unidades),
-            (ft.icons.SHOPPING_BAG, cantidad_material),
-            (ft.icons.SPEED, presion_superficial),
-            (ft.icons.OPACITY, coeficiente_permeabilidad)
+            ("📦", "Volumen por dimensiones", volumen_dimensiones),
+            ("⚖️", "Volumen por masa y densidad", volumen_masa_densidad),
+            ("🔄", "Conversión de unidades", conversion_unidades),
+            ("🛒", "Cantidad de bolsas de material", cantidad_material),
+            ("📏", "Presión superficial", presion_superficial),
+            ("💧", "Coeficiente de permeabilidad", coeficiente_permeabilidad)
         ]
-        SQUARE_BTN_SIZE = 100
+        SQUARE_BTN_SIZE = 110
         square_btn_style = ft.ButtonStyle(
             shape=ft.RoundedRectangleBorder(radius=8),
             padding=0,
         )
         botones = [
             ft.ElevatedButton(
-                content=ft.Icon(icono, size=48),
+                content=ft.Column([
+                    ft.Text(emoji, size=38),
+                    ft.Text(texto, size=13, weight="bold", text_align="center"),
+                ], alignment="center", horizontal_alignment="center", spacing=2),
                 on_click=funcion,
                 width=SQUARE_BTN_SIZE,
                 height=SQUARE_BTN_SIZE,
                 style=square_btn_style
             )
-            for icono, funcion in opciones
+            for emoji, texto, funcion in opciones
         ]
         filas = [
             ft.Row(controls=botones[i:i+2], spacing=10, alignment="center")
