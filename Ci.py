@@ -1,8 +1,8 @@
 import flet as ft
 
-def campo_resaltado(label, width=None):
+def campo_recruados(label, width=None):
     return ft.Container(
-        ft.TextField(label=label, bgcolor="#FFFBCC", border_radius=8, width=width, color="black"),
+        ft.TextField(label=label, bgcolor="#FFFFFF", border_radius=8, width=width, color="black"),
         bgcolor="#FFFBCC",
         border_radius=8,
         border=ft.border.all(2, "black"),  
