@@ -5,6 +5,7 @@ def campo_resaltado(label, width=None):
         ft.TextField(label=label, bgcolor="#FFFBCC", border_radius=8, width=width, color="black"),
         bgcolor="#FFFBCC",
         border_radius=8,
+        border=ft.border.all(2, "black"),  
         padding=4,
         margin=2
     )
@@ -17,6 +18,7 @@ def main(page: ft.Page):
         resultado,
         bgcolor="white",
         border_radius=10,
+        border=ft.border.all(2, "black"),  
         padding=15,
         alignment=ft.alignment.center,
         margin=10,
@@ -165,12 +167,10 @@ def main(page: ft.Page):
         def actualizar_unidades(ev=None):
             u_origen.options.clear()
             u_destino.options.clear()
-            
             unidades = categorias[categoria.value] if isinstance(categorias[categoria.value], dict) else categorias[categoria.value]
             for u in unidades:
                 u_origen.options.append(ft.dropdown.Option(u))
                 u_destino.options.append(ft.dropdown.Option(u))
-           
             if u_origen.options:
                 u_origen.value = u_origen.options[0].key
             if u_destino.options:
@@ -179,7 +179,7 @@ def main(page: ft.Page):
                 else:
                     u_destino.value = u_destino.options[0].key
             page.update()
-            convertir()  
+            convertir()
 
         def convertir(ev=None):
             try:
@@ -207,13 +207,11 @@ def main(page: ft.Page):
                 resultado.value = ""
             page.update()
 
-        
         valor.content.on_change = convertir
         categoria.on_change = actualizar_unidades
         u_origen.on_change = convertir
         u_destino.on_change = convertir
 
-        
         actualizar_unidades()
 
         page.controls.extend([
