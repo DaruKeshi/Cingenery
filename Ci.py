@@ -3,7 +3,6 @@ import flet as ft
 # ==== COMPONENTES REUTILIZABLES ==== #
 
 def crear_campo(label, width=None, value=None):
-    """Crea un campo de texto resaltado para la interfaz."""
     campo = ft.TextField(label=label, value=value, bgcolor="#FFFFFF", border_radius=8, color="black", width=width)
     contenedor = ft.Container(
         campo,
@@ -16,7 +15,6 @@ def crear_campo(label, width=None, value=None):
     return campo, contenedor
 
 def crear_filas_botones(materiales, accion_al_pulsar):
-    """Devuelve una lista de filas de botones para seleccionar materiales."""
     return [
         ft.Row(
             controls=[ft.ElevatedButton(m, on_click=lambda e, m=m: accion_al_pulsar(m)) for m in materiales[i:i+2]],
@@ -26,7 +24,6 @@ def crear_filas_botones(materiales, accion_al_pulsar):
     ]
 
 def cuadro_resultado_widget(label_resultado):
-    """Devuelve un contenedor visualmente agradable para mostrar el resultado."""
     return ft.Container(
         label_resultado,
         bgcolor="white",
@@ -39,7 +36,6 @@ def cuadro_resultado_widget(label_resultado):
     )
 
 def mostrar_menu_principal(page, ir_a_pantalla):
-    """Muestra el menú principal con todas las opciones de la calculadora."""
     page.controls.clear()
     page.controls.append(ft.Text("Calculadora de Ingeniería", size=24, weight="bold"))
     opciones = [
