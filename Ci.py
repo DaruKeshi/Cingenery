@@ -2,7 +2,7 @@ import flet as ft
 
 def campo_resaltado(label, width=None):
     return ft.Container(
-        ft.TextField(label=label, bgcolor="#FFFBCC", border_radius=8, width=width),
+        ft.TextField(label=label, bgcolor="#FFFBCC", border_radius=8, width=width, color="Black"),
         bgcolor="#FFFBCC",
         border_radius=8,
         padding=4,
