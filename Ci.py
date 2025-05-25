@@ -3,7 +3,16 @@ import flet as ft
 def main(page: ft.Page):
     page.title = "Calculadora de Ingeniería"
     page.scroll = "auto"
-    resultado = ft.Text()
+    resultado = ft.Text(size=20, weight="bold", text_align="center")
+    contenedor_resultado = ft.Container(
+        resultado,
+        bgcolor="white",
+        border_radius=10,
+        padding=15,
+        alignment=ft.alignment.center,
+        margin=10,
+        shadow=ft.BoxShadow(blur_radius=8, color=ft.colors.GREY_300)
+    )
     materiales = {
         "Hormigón": 2400,
         "Cemento": 1500,
@@ -67,9 +76,9 @@ def main(page: ft.Page):
                 resultado.value = "Error en los valores"
             page.update()
         page.controls.extend([
+            contenedor_resultado,
             ft.Text("Volumen (L x A x H)", size=20), l, a, h,
             ft.ElevatedButton("Calcular", on_click=calcular),
-            resultado,
             ft.ElevatedButton("Volver al menú", on_click=mostrar_menu)
         ])
         page.update()
@@ -118,12 +127,12 @@ def main(page: ft.Page):
         densidad_custom.on_change = calcular_personalizado
 
         page.controls.extend([
+            contenedor_resultado,
             ft.Text("Volumen (masa / densidad)", size=20),
             masa,
-            ft.Row([unidad, densidad_custom], spacing=10),  # Agrupados en una fila
+            ft.Row([unidad, densidad_custom], spacing=10),
             ft.Text("Selecciona material:"),
             *filas,
-            resultado,
             ft.ElevatedButton("Volver al menú", on_click=mostrar_menu)
         ])
         page.update()
@@ -173,10 +182,10 @@ def main(page: ft.Page):
                 resultado.value = "Error en la conversión"
             page.update()
         page.controls.extend([
+            contenedor_resultado,
             ft.Text("Conversión de unidades", size=20),
             valor, categoria, u_origen, u_destino,
             ft.ElevatedButton("Convertir", on_click=convertir),
-            resultado,
             ft.ElevatedButton("Volver al menú", on_click=mostrar_menu)
         ])
         page.update()
@@ -213,12 +222,12 @@ def main(page: ft.Page):
                 resultado.value = "Error en los valores"
             page.update()
         page.controls.extend([
+            contenedor_resultado,
             ft.Text("Cantidad de bolsas de material", size=20),
             volumen, densidad, rendimiento,
             ft.Text("Materiales comunes:"),
             *filas,
             ft.ElevatedButton("Calcular", on_click=calcular),
-            resultado,
             ft.ElevatedButton("Volver al menú", on_click=mostrar_menu)
         ])
         page.update()
@@ -240,10 +249,10 @@ def main(page: ft.Page):
                 resultado.value = "Error en los valores"
             page.update()
         page.controls.extend([
+            contenedor_resultado,
             ft.Text("Cálculo de presión superficial", size=20),
             carga, area, unidad,
             ft.ElevatedButton("Calcular", on_click=calcular),
-            resultado,
             ft.ElevatedButton("Volver al menú", on_click=mostrar_menu)
         ])
         page.update()
@@ -268,10 +277,10 @@ def main(page: ft.Page):
                 resultado.value = "Error en los valores"
             page.update()
         page.controls.extend([
+            contenedor_resultado,
             ft.Text("Coeficiente de permeabilidad", size=20),
             q, l, a, h, t,
             ft.ElevatedButton("Calcular", on_click=calcular),
-            resultado,
             ft.ElevatedButton("Volver al menú", on_click=mostrar_menu)
         ])
         page.update()
