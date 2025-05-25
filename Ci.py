@@ -2,13 +2,13 @@ import flet as ft
 
 def campo_resaltado(label, width=None):
     return ft.Container(
-        ft.TextField(label=label, bgcolor="#FFFBCC", border_radius=8, width=width, color="Black"),
+        ft.TextField(label=label, bgcolor="#FFFBCC", border_radius=8, width=width, color="black"),
         bgcolor="#FFFBCC",
         border_radius=8,
         padding=4,
         margin=2
     )
-#pagina principal
+
 def main(page: ft.Page):
     page.title = "Calculadora de Ingeniería"
     page.scroll = "auto"
@@ -30,12 +30,12 @@ def main(page: ft.Page):
         "Acero": 7850,
         "Madera": 600,
     }
-#limpiar toda la pantalla para no dejar rastros
+
     def limpiar_controles():
         page.controls.clear()
         resultado.value = ""
         page.update()
-#Menu principal
+
     def mostrar_menu(e=None):
         limpiar_controles()
         page.controls.append(ft.Text("Calculadora de Ingeniería", size=24, weight="bold"))
@@ -71,7 +71,7 @@ def main(page: ft.Page):
         ]
         page.controls.extend(filas)
         page.update()
-#calculo de volumen por Lado X Altura X Ancho
+
     def volumen_dimensiones(e):
         limpiar_controles()
         l = campo_resaltado("Largo (m)")
@@ -99,7 +99,7 @@ def main(page: ft.Page):
             ft.ElevatedButton("Volver al menú", on_click=mostrar_menu)
         ])
         page.update()
-#calculo de volumen Masa X Densidad
+
     def volumen_masa_densidad(e):
         limpiar_controles()
         masa = campo_resaltado("Masa")
@@ -148,7 +148,7 @@ def main(page: ft.Page):
             ft.ElevatedButton("Volver al menú", on_click=mostrar_menu)
         ])
         page.update()
-#conversor de unidades
+
     def conversion_unidades(e):
         limpiar_controles()
         valor = campo_resaltado("Valor")
@@ -159,36 +159,46 @@ def main(page: ft.Page):
             "Temperatura": ["C","F","K"]
         }
         categoria = ft.Dropdown(label="Categoría", options=[ft.dropdown.Option(c) for c in categorias], value="Longitud")
-        u_origen = ft.Dropdown(label="Unidad de origen", options=[])
-        u_destino = ft.Dropdown(label="Unidad destino", options=[])
+        u_origen = ft.Dropdown(label="Unidad de origen", options=[], value=None)
+        u_destino = ft.Dropdown(label="Unidad destino", options=[], value=None)
 
         def actualizar_unidades(ev=None):
             u_origen.options.clear()
             u_destino.options.clear()
+            
             unidades = categorias[categoria.value] if isinstance(categorias[categoria.value], dict) else categorias[categoria.value]
             for u in unidades:
                 u_origen.options.append(ft.dropdown.Option(u))
                 u_destino.options.append(ft.dropdown.Option(u))
-            if u_origen.options: u_origen.value = u_origen.options[0].key
-            if u_destino.options and len(u_destino.options) > 1:
-                u_destino.value = u_destino.options[1].key
-            elif u_destino.options:
-                u_destino.value = u_destino.options[0].key
+           
+            if u_origen.options:
+                u_origen.value = u_origen.options[0].key
+            if u_destino.options:
+                if len(u_destino.options) > 1:
+                    u_destino.value = u_destino.options[1].key
+                else:
+                    u_destino.value = u_destino.options[0].key
             page.update()
-
-        categoria.on_change = actualizar_unidades
-        actualizar_unidades()
+            convertir()  
 
         def convertir(ev=None):
             try:
                 v = float(valor.content.value)
                 cat = categoria.value
                 u1, u2 = u_origen.value, u_destino.value
+                if not u1 or not u2:
+                    resultado.value = ""
+                    page.update()
+                    return
                 if cat == "Temperatura":
-                    if u1 == u2: r = v
-                    elif u1 == "C": r = v+273.15 if u2=="K" else v*9/5+32
-                    elif u1 == "F": r = (v-32)*5/9 if u2=="C" else (v-32)*5/9+273.15
-                    elif u1 == "K": r = v-273.15 if u2=="C" else (v-273.15)*9/5+32
+                    if u1 == u2:
+                        r = v
+                    elif u1 == "C":
+                        r = v+273.15 if u2=="K" else v*9/5+32
+                    elif u1 == "F":
+                        r = (v-32)*5/9 if u2=="C" else (v-32)*5/9+273.15
+                    elif u1 == "K":
+                        r = v-273.15 if u2=="C" else (v-273.15)*9/5+32
                 else:
                     base = v * categorias[cat][u1]
                     r = base / categorias[cat][u2]
@@ -197,10 +207,14 @@ def main(page: ft.Page):
                 resultado.value = ""
             page.update()
 
+        
         valor.content.on_change = convertir
-        categoria.on_change = convertir
+        categoria.on_change = actualizar_unidades
         u_origen.on_change = convertir
         u_destino.on_change = convertir
+
+        
+        actualizar_unidades()
 
         page.controls.extend([
             contenedor_resultado,
@@ -209,7 +223,7 @@ def main(page: ft.Page):
             ft.ElevatedButton("Volver al menú", on_click=mostrar_menu)
         ])
         page.update()
-#calculo de cantidad de material en base a necesidad
+
     def cantidad_material(e):
         limpiar_controles()
         volumen = campo_resaltado("Volumen (m³)")
@@ -255,7 +269,7 @@ def main(page: ft.Page):
             ft.ElevatedButton("Volver al menú", on_click=mostrar_menu)
         ])
         page.update()
-#calculo de presion superficial
+
     def presion_superficial(e):
         limpiar_controles()
         carga = campo_resaltado("Carga (kgf)")
@@ -285,7 +299,7 @@ def main(page: ft.Page):
             ft.ElevatedButton("Volver al menú", on_click=mostrar_menu)
         ])
         page.update()
-#calculo de coeficiente de permeabilidad
+
     def coeficiente_permeabilidad(e):
         limpiar_controles()
         q = campo_resaltado("Volumen Q (litros)")
@@ -320,7 +334,7 @@ def main(page: ft.Page):
         page.update()
 
     mostrar_menu()
-#comando encargado de la vista en web
+
 import os
 from flet import app, AppView
 
