@@ -68,17 +68,25 @@ def main(page: ft.Page):
         l = ft.TextField(label="Largo (m)")
         a = ft.TextField(label="Ancho (m)")
         h = ft.TextField(label="Altura (m)")
-        def calcular(ev):
+
+        def calcular(ev=None):
             try:
-                v = float(l.value) * float(a.value) * float(h.value)
-                resultado.value = f"Volumen: {v:.4f} m³"
+                v = float(l.value)
+                an = float(a.value)
+                al = float(h.value)
+                resultado.value = f"Volumen: {v * an * al:.4f} m³"
             except Exception:
-                resultado.value = "Error en los valores"
+                resultado.value = ""
             page.update()
+
+        l.on_change = calcular
+        a.on_change = calcular
+        h.on_change = calcular
+
         page.controls.extend([
             contenedor_resultado,
-            ft.Text("Volumen (L x A x H)", size=20), l, a, h,
-            ft.ElevatedButton("Calcular", on_click=calcular),
+            ft.Text("Volumen (L x A x H)", size=20),
+            l, a, h,
             ft.ElevatedButton("Volver al menú", on_click=mostrar_menu)
         ])
         page.update()
@@ -102,7 +110,7 @@ def main(page: ft.Page):
                 v = m / materiales[d]
                 resultado.value = f"{d}: {v:.4f} m³"
             except Exception:
-                resultado.value = "Error en el cálculo"
+                resultado.value = ""
             page.update()
 
         botones = [ft.ElevatedButton(mat, on_click=lambda e, m=mat: calcular_densidad(m)) for mat in materiales]
@@ -118,12 +126,13 @@ def main(page: ft.Page):
                 if u == "g": m /= 1000
                 elif u == "toneladas": m *= 1000
                 densidad = float(densidad_custom.value)
-                v = m / densidad
-                resultado.value = f"Volumen: {v:.4f} m³"
+                resultado.value = f"Volumen: {m / densidad:.4f} m³"
             except Exception:
-                resultado.value = "Error en el calculo"
+                resultado.value = ""
             page.update()
 
+        masa.on_change = calcular_personalizado
+        unidad.on_change = calcular_personalizado
         densidad_custom.on_change = calcular_personalizado
 
         page.controls.extend([
@@ -149,7 +158,8 @@ def main(page: ft.Page):
         categoria = ft.Dropdown(label="Categoría", options=[ft.dropdown.Option(c) for c in categorias], value="Longitud")
         u_origen = ft.Dropdown(label="Unidad de origen", options=[])
         u_destino = ft.Dropdown(label="Unidad destino", options=[])
-        def actualizar_unidades(ev):
+
+        def actualizar_unidades(ev=None):
             u_origen.options.clear()
             u_destino.options.clear()
             unidades = categorias[categoria.value] if isinstance(categorias[categoria.value], dict) else categorias[categoria.value]
@@ -162,9 +172,11 @@ def main(page: ft.Page):
             elif u_destino.options:
                 u_destino.value = u_destino.options[0].key
             page.update()
+
         categoria.on_change = actualizar_unidades
-        actualizar_unidades(None)
-        def convertir(ev):
+        actualizar_unidades()
+
+        def convertir(ev=None):
             try:
                 v = float(valor.value)
                 cat = categoria.value
@@ -179,13 +191,18 @@ def main(page: ft.Page):
                     r = base / categorias[cat][u2]
                 resultado.value = f"{v} {u1} = {r:.4f} {u2}"
             except Exception:
-                resultado.value = "Error en la conversión"
+                resultado.value = ""
             page.update()
+
+        valor.on_change = convertir
+        categoria.on_change = convertir
+        u_origen.on_change = convertir
+        u_destino.on_change = convertir
+
         page.controls.extend([
             contenedor_resultado,
             ft.Text("Conversión de unidades", size=20),
             valor, categoria, u_origen, u_destino,
-            ft.ElevatedButton("Convertir", on_click=convertir),
             ft.ElevatedButton("Volver al menú", on_click=mostrar_menu)
         ])
         page.update()
@@ -205,13 +222,14 @@ def main(page: ft.Page):
         def usar_material(m):
             densidad.value = str(materiales_local[m]["densidad"])
             rendimiento.value = str(materiales_local[m]["rendimiento"])
+            calcular(None)
             page.update()
         botones = [ft.ElevatedButton(mat, on_click=lambda e, m=mat: usar_material(m)) for mat in materiales_local]
         filas = [
             ft.Row(controls=botones[i:i+2], spacing=10)
             for i in range(0, len(botones), 2)
         ]
-        def calcular(ev):
+        def calcular(ev=None):
             try:
                 v = float(volumen.value)
                 d = float(densidad.value)
@@ -219,15 +237,19 @@ def main(page: ft.Page):
                 bolsas = (v * d) / r
                 resultado.value = f"Necesitas aproximadamente {bolsas:.2f} bolsas"
             except Exception:
-                resultado.value = "Error en los valores"
+                resultado.value = ""
             page.update()
+        # Asignar evento on_change a los campos
+        volumen.on_change = calcular
+        densidad.on_change = calcular
+        rendimiento.on_change = calcular
+
         page.controls.extend([
             contenedor_resultado,
             ft.Text("Cantidad de bolsas de material", size=20),
             volumen, densidad, rendimiento,
             ft.Text("Materiales comunes:"),
             *filas,
-            ft.ElevatedButton("Calcular", on_click=calcular),
             ft.ElevatedButton("Volver al menú", on_click=mostrar_menu)
         ])
         page.update()
@@ -237,7 +259,8 @@ def main(page: ft.Page):
         carga = ft.TextField(label="Carga (kgf)")
         area = ft.TextField(label="Área (m²)")
         unidad = ft.Dropdown(label="Unidad", options=[ft.dropdown.Option("kg/m²"), ft.dropdown.Option("kN/m²")], value="kg/m²")
-        def calcular(ev):
+
+        def calcular(ev=None):
             try:
                 c = float(carga.value)
                 a = float(area.value)
@@ -246,13 +269,17 @@ def main(page: ft.Page):
                     presion *= 0.00980665
                 resultado.value = f"Presión: {presion:.4f} {unidad.value}"
             except Exception:
-                resultado.value = "Error en los valores"
+                resultado.value = ""
             page.update()
+
+        carga.on_change = calcular
+        area.on_change = calcular
+        unidad.on_change = calcular
+
         page.controls.extend([
             contenedor_resultado,
             ft.Text("Cálculo de presión superficial", size=20),
             carga, area, unidad,
-            ft.ElevatedButton("Calcular", on_click=calcular),
             ft.ElevatedButton("Volver al menú", on_click=mostrar_menu)
         ])
         page.update()
@@ -264,7 +291,7 @@ def main(page: ft.Page):
         a = ft.TextField(label="Área A (cm²)")
         h = ft.TextField(label="Carga hidráulica h (m)")
         t = ft.TextField(label="Tiempo t (s)")
-        def calcular(ev):
+        def calcular(ev=None):
             try:
                 Q = float(q.value) / 1000
                 L = float(l.value)
@@ -274,13 +301,18 @@ def main(page: ft.Page):
                 k = (Q * L) / (A * H * T)
                 resultado.value = f"Coef. de permeabilidad: {k:.6e} m/s"
             except Exception:
-                resultado.value = "Error en los valores"
+                resultado.value = ""
             page.update()
+        q.on_change = calcular
+        l.on_change = calcular
+        a.on_change = calcular
+        h.on_change = calcular
+        t.on_change = calcular
+
         page.controls.extend([
             contenedor_resultado,
             ft.Text("Coeficiente de permeabilidad", size=20),
             q, l, a, h, t,
-            ft.ElevatedButton("Calcular", on_click=calcular),
             ft.ElevatedButton("Volver al menú", on_click=mostrar_menu)
         ])
         page.update()
