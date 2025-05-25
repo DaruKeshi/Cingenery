@@ -6,12 +6,12 @@ def main(page: ft.Page):
     resultado = ft.Text(size=20, weight="bold", text_align="center")
     contenedor_resultado = ft.Container(
         resultado,
-        bgcolor="white",
+        bgcolor="white",  
         border_radius=10,
         padding=15,
         alignment=ft.alignment.center,
         margin=10,
-        shadow=ft.BoxShadow(blur_radius=8, color=ft.colors.GREY_300)
+        shadow=ft.BoxShadow(blur_radius=8, color="#e0e0e0")  
     )
     materiales = {
         "Hormigón": 2400,
@@ -121,7 +121,7 @@ def main(page: ft.Page):
                 v = m / densidad
                 resultado.value = f"Volumen: {v:.4f} m³"
             except Exception:
-                resultado.value = "Error en personalizado"
+                resultado.value = "Error en el calculo"
             page.update()
 
         densidad_custom.on_change = calcular_personalizado
