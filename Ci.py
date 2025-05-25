@@ -92,60 +92,54 @@ def main(page: ft.Page):
         page.update()
 
     def volumen_masa_densidad(e):
-        limpiar_controles()
-        masa = ft.TextField(label="Masa")
-        unidad = ft.Dropdown(label="Unidad", options=[
-            ft.dropdown.Option("g"),
-            ft.dropdown.Option("kg"),
-            ft.dropdown.Option("toneladas")
-        ], value="kg", width=120)
-        densidad_custom = ft.TextField(label="Densidad personalizada (kg/m³)", width=170)
+    limpiar_controles()
+    masa = ft.TextField(label="Masa")
+    unidad = ft.Dropdown(label="Unidad", options=[
+        ft.dropdown.Option("g"),
+        ft.dropdown.Option("kg"),
+        ft.dropdown.Option("toneladas")
+    ], value="kg", width=120)
+    densidad = ft.TextField(label="Densidad (kg/m³)", width=170)  # <- Cambiado el label
 
-        def calcular_densidad(d):
-            try:
-                m = float(masa.value)
-                u = unidad.value
-                if u == "g": m /= 1000
-                elif u == "toneladas": m *= 1000
-                v = m / materiales[d]
-                resultado.value = f"{d}: {v:.4f} m³"
-            except Exception:
-                resultado.value = ""
-            page.update()
-
-        botones = [ft.ElevatedButton(mat, on_click=lambda e, m=mat: calcular_densidad(m)) for mat in materiales]
-        filas = [
-            ft.Row(controls=botones[i:i+2], spacing=10)
-            for i in range(0, len(botones), 2)
-        ]
-
-        def calcular_personalizado(ev=None):
-            try:
-                m = float(masa.value)
-                u = unidad.value
-                if u == "g": m /= 1000
-                elif u == "toneladas": m *= 1000
-                densidad = float(densidad_custom.value)
-                resultado.value = f"Volumen: {m / densidad:.4f} m³"
-            except Exception:
-                resultado.value = ""
-            page.update()
-
-        masa.on_change = calcular_personalizado
-        unidad.on_change = calcular_personalizado
-        densidad_custom.on_change = calcular_personalizado
-
-        page.controls.extend([
-            contenedor_resultado,
-            ft.Text("Volumen (masa / densidad)", size=20),
-            masa,
-            ft.Row([unidad, densidad_custom], spacing=10),
-            ft.Text("Selecciona material:"),
-            *filas,
-            ft.ElevatedButton("Volver al menú", on_click=mostrar_menu)
-        ])
+    def usar_material(d):
+        densidad.value = str(materiales[d])  # Poner la densidad del material en el campo
+        calcular(None)
         page.update()
 
+    botones = [ft.ElevatedButton(mat, on_click=lambda e, m=mat: usar_material(m)) for mat in materiales]
+    filas = [
+        ft.Row(controls=botones[i:i+2], spacing=10)
+        for i in range(0, len(botones), 2)
+    ]
+
+    def calcular(ev=None):
+        try:
+            m = float(masa.value)
+            u = unidad.value
+            if u == "g": m /= 1000
+            elif u == "toneladas": m *= 1000
+            d = float(densidad.value)
+            v = m / d
+            resultado.value = f"Volumen: {v:.4f} m³"
+        except Exception:
+            resultado.value = ""
+        page.update()
+
+    # Hacer que cualquier cambio recalcule
+    masa.on_change = calcular
+    unidad.on_change = calcular
+    densidad.on_change = calcular
+
+    page.controls.extend([
+        contenedor_resultado,
+        ft.Text("Volumen (masa / densidad)", size=20),
+        masa,
+        ft.Row([unidad, densidad], spacing=10),  # densidad actualizado
+        ft.Text("Selecciona material:"),
+        *filas,
+        ft.ElevatedButton("Volver al menú", on_click=mostrar_menu)
+    ])
+    page.update()
     def conversion_unidades(e):
         limpiar_controles()
         valor = ft.TextField(label="Valor")
