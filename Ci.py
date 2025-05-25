@@ -3,7 +3,7 @@ import flet as ft
 def main(page: ft.Page):
     page.title = "Calculadora de Ingeniería"
     page.scroll = "auto"
-    resultado = ft.Text(size=20, weight="bold", text_align="center")
+    resultado = ft.Text(size=20, weight="bold", color="blue", text_align="center")
     contenedor_resultado = ft.Container(
         resultado,
         bgcolor="white",  
